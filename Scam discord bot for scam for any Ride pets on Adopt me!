@@ -1,1 +1,33 @@
+import discord
+from discord.ext import commands
+import random
 
+intents = discord.Intents.default()
+intents.typing = False
+intents.presences = False
+
+bot = commands.Bot(command_prefix='/', intents=intents)
+
+robucks_balance = 12872
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord!')
+
+@bot.command()
+async def trade(ctx):
+    global robucks_balance
+    pet_cost = random.randint(80, 200)
+    if pet_cost > robucks_balance:
+        await ctx.send("У бота не хватает робуксов для совершения обмена.")
+    else:
+        robucks_balance -= pet_cost
+        await ctx.send(f"Ваш Ride пет успешно обменян на {pet_cost} робуксов!")
+        await ctx.send(f"Сейчас у бота {robucks_balance} робуксов на балансе.")
+
+@bot.command()
+async def stock(ctx):
+    global robucks_balance
+    await ctx.send(f"Сейчас у бота {robucks_balance} робуксов на балансе.")
+
+bot.run('your_bot_token')
