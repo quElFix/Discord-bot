@@ -1,0 +1,43 @@
+import discord
+from discord.ext import commands
+import os
+import random
+
+TOKEN = 'your_bot_token'
+bot = commands.Bot(command_prefix='/')
+
+bot.stock = 12872
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord!')
+
+@bot.command(name='stock', help='Shows the current stock of the bot.')
+async def stock(ctx):
+    await ctx.send(f'The current stock of the bot is: {bot.stock} robucks.')
+
+@bot.command(name='trade', help='Trade a ride pet for robucks.')
+async def trade(ctx):
+    if ctx.author.bot:
+        return
+
+    amount = random.randint(50, 200)
+    bot.stock += amount
+    await ctx.send(f'Successfully traded a ride pet for {amount} robucks. The new stock of the bot is: {bot.stock} robucks.')
+
+@bot.command(name='gift', help='Gift someone with robucks from the bot.')
+async def gift(ctx, user: discord.Member, amount: int):
+    if ctx.author.bot:
+        return
+
+    if bot.stock >= amount:
+        bot.stock -= amount
+        await ctx.send(f'Successfully gifted {user.mention} with {amount} robucks. The new stock of the bot is: {bot.stock} robucks.')
+    else:
+        await ctx.send('Sorry, the bot does not have enough robucks to gift.')
+
+@bot.command(name='start', help='Start the bot.')
+async def start(ctx):
+    await ctx.send('The bot is already running.')
+
+bot.run(TOKEN)
